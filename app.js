@@ -35,9 +35,11 @@ app.use(bodyparser.urlencoded({extended:true}))
 app.use(bodyparser.json())
 
 const userRouter = require("./src/userRouter/userRouter")
+const productionRouter = require("./src/productionRouter/productionRouter");
 
 app.use(cors())
-app.use("/user",userRouter)
+app.use("/user",userRouter);
+app.use("/product",productionRouter);
 
 
 app.listen(port, () => {
