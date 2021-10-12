@@ -39,7 +39,7 @@ const productionRouter = require("./src/productionRouter/productionRouter");
 
 app.use(cors())
 app.use("/user",userRouter);
-app.use("/product",productionRouter);
+app.use("/production",productionRouter);
 
 
 app.listen(port, () => {
