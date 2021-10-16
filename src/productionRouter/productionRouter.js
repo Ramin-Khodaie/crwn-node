@@ -3,6 +3,7 @@ const {
   addProduction,
   getAllProducts,
   getCategory,
+  getShopItems,
 } = require("../../model/production/productionModel");
 
 const router = express.Router();
@@ -24,7 +25,7 @@ router.get("/", async (req, res) => {
     const data = await getAllProducts();
 
     if (data) {
-      console.log(444, data);
+      
       res.json({
         status: "success",
         message: "data retrieve successfully",
@@ -32,16 +33,21 @@ router.get("/", async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(444, error);
     res.json({ status: "error", message: "error in data fecthing" });
   }
 });
-
+router.get('/shopitem',async (req,res)=>{
+  const data = await getShopItems()
+    if(data){
+    res.json({status:"success",data})
+  }
+})
 router.get("/:_id",async(req,res)=>{
     const {_id} = req.params
+    console.log(666,_id)
     try {
         const data = await getCategory(_id);
-        console.log(data)
+        
         res.json({status:"success",message:"ok",data})
     } catch (error) {
         

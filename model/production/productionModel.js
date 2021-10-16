@@ -13,14 +13,23 @@ const getAllProducts = () => {
   return new Promise((resolve, reject) => {
     productionSchema
       .find()
+      .select("-items")
       .then((data) => resolve(data))
       .catch((err) => reject(err));
   });
 };
 
+const getShopItems = () => {
+  return new Promise((resolve, reject) => {
+    productionSchema
+      .find({})
+      .then((d) => resolve(d))
+      .catch((e) => reject(e));
+  });
+};
 const getCategory = (_id) => {
   return new Promise((resolve, reject) => {
-      console.log(333,_id)
+    console.log(333, _id);
     productionSchema
       .findById(_id)
       .then((data) => resolve(data))
@@ -30,5 +39,6 @@ const getCategory = (_id) => {
 module.exports = {
   addProduction,
   getAllProducts,
-  getCategory
+  getCategory,
+  getShopItems,
 };

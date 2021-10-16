@@ -4,7 +4,7 @@ const {addRefreshToken} = require("../model/user/userModel")
 
 const createAccessToken = async (email,id)=>{
     const accessToken = JWT.sign({email},process.env.ACCESSTOKEN,{
-        expiresIn: "2h"
+        expiresIn: "1m"
     })
 
     await setJWT(accessToken,id)
