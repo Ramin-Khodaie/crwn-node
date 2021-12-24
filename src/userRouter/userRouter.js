@@ -1,25 +1,33 @@
 const express = require("express");
-const { addNewUser, getUserByEmail } = require("../../model/user/userModel");
+const {
+  addNewUser,
+  getUserByEmail,
+  deleteRefreshToken,
+} = require("../../model/user/userModel");
 
 const {
   hashedPassword,
   comparePassword,
 } = require("../../utils/hashedPassword");
 
-const {createAccessToken,createRefreshToken} = require("../../utils/JWTTokens")
+const { userAuthorization } = require("../../utils/authorization");
+const {
+  createAccessToken,
+  createRefreshToken,
+} = require("../../utils/JWTTokens");
+const { deleteJWT } = require("../../utils/redis");
 const router = express.Router();
 
 //add new user
 router.post("/newuser", async (req, res) => {
   const { name, email, password } = req.body;
-  console.log(req.body)
   const encryptedPassword = await hashedPassword(password);
   const newUser = {
     name,
     email,
     password: encryptedPassword,
   };
-  const result = await addNewUser(newUser);
+  const result = await addNewsUser(newUser);
   if (result) {
     return res.json({ status: "success", message: "new user added." });
   }
@@ -29,7 +37,7 @@ router.post("/newuser", async (req, res) => {
 //user login
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body)
+
   if (!email || !password)
     return res.json({ status: "error", message: "invalid form submition" });
 
@@ -44,17 +52,17 @@ router.post("/login", async (req, res) => {
   if (!isPasswordMatch) {
     res.json({ status: "error", message: "Invalid email or password" });
   }
-  
+
   const accessToken = await createAccessToken(user.email, `${user._id}`);
   const refreshToken = await createRefreshToken(user.email, `${user._id}`);
-  
+
   res.json({
     status: "success",
     message: "login successfuly",
-    userinfo:{
-      name:user.name,
-      email:user.email,
-      createdAt:user.createdAt
+    userinfo: {
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
     },
     accessToken,
     refreshToken,
@@ -62,7 +70,23 @@ router.post("/login", async (req, res) => {
 });
 
 //user logout
-router.delete("/logout",(req,res)=>{
+router.delete("/logout", userAuthorization, async (req, res) => {
+ 
+  const { authorization } = req.headers;
 
-})
+  const userId = req.userId;
+
+  deleteJWT(authorization);
+
+  const user = await deleteRefreshToken(userId, "");
+  console.log(1122,user)
+  if (user._id) {
+    res.json({ status: "success", message: "loggout successfuly", user });
+  } else {
+    res.json({
+      status: "error",
+      message: "you cannot logged out,plz try again.",
+    });
+  }
+});
 module.exports = router;
