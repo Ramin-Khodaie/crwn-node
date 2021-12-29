@@ -34,13 +34,16 @@ const bodyparser = require("body-parser");
 app.use(bodyparser.urlencoded({extended:true}))
 app.use(bodyparser.json())
 
+
 const userRouter = require("./src/userRouter/userRouter")
 const productionRouter = require("./src/productionRouter/productionRouter");
+const orderRouter = require("./src/Order/orderRouter")
 
+//routes
 app.use(cors())
 app.use("/user",userRouter);
 app.use("/production",productionRouter);
-
+app.use("/order",orderRouter)
 
 app.listen(port, () => {
     console.log(`API is runing on http://localhost:${port}`);
